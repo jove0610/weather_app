@@ -10,27 +10,25 @@ class App extends React.Component {
 
     this.state = {
       resAPI: '',
-    };
-
-    this.tempUnit = '';
-
-    this.submitCallback = (inputCity, unit) => {
-      this.tempUnit = unit;
-      this.setState({ resAPI: inputCity });
-    };
-
-    this.renderOptions = () => {
-      const { resAPI } = this.state;
-
-      if (resAPI.status === 200) {
-        return <WeatherCard city={resAPI} tempUnit={this.tempUnit} />;
-      }
-      if (resAPI.status === undefined) {
-        return null;
-      }
-      return <MessageCard message={resAPI} />;
+      tempUnit: '',
     };
   }
+
+  submitCallback = (inputCity, unit) => {
+    this.setState({ resAPI: inputCity, tempUnit: unit });
+  };
+
+  renderOptions = () => {
+    const { resAPI, tempUnit } = this.state;
+
+    if (resAPI.status === 200) {
+      return <WeatherCard city={resAPI} tempUnit={tempUnit} />;
+    }
+    if (resAPI.status === undefined) {
+      return null;
+    }
+    return <MessageCard message={resAPI} />;
+  };
 
   render() {
     return (

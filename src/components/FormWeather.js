@@ -7,36 +7,42 @@ class FormWeather extends React.Component {
   constructor(props) {
     super(props);
 
-    this.input = '';
-    this.unit = '';
-
-    this.onInputChange = (e) => {
-      this.input = e.target.value;
-    };
-
-    this.onRadioClick = (tempUnit) => {
-      this.unit = tempUnit;
-    };
-
-    this.onFormSubmit = async (e) => {
-      e.preventDefault();
-
-      const res = await axios
-        .get('https://api.openweathermap.org/data/2.5/weather', {
-          params: {
-            q: this.input,
-            appid: '579fd364faebae12bc5fa73c09e893e3',
-            units: this.unit,
-          },
-        })
-        .then((data) => data)
-        .catch((err) => err.request);
-
-      props.submitCallback(res, this.unit);
+    this.state = {
+      input: '',
+      unit: '',
     };
   }
 
+  onInputChange = (e) => {
+    this.setState({ input: e.target.value });
+  };
+
+  onRadioClick = (tempUnit) => {
+    this.setState({ unit: tempUnit });
+  };
+
+  onFormSubmit = async (e) => {
+    e.preventDefault();
+    const { submitCallback } = this.props;
+    const { unit, input } = this.state;
+
+    const res = await axios
+      .get('https://api.openweathermap.org/data/2.5/weather', {
+        params: {
+          q: input,
+          appid: '579fd364faebae12bc5fa73c09e893e3',
+          units: unit,
+        },
+      })
+      .then((data) => data)
+      .catch((err) => err.request);
+
+    submitCallback(res, unit);
+  };
+
   render() {
+    const { input } = this.state;
+
     return (
       <form onSubmit={this.onFormSubmit} className={styles.form}>
         <header>
@@ -46,6 +52,7 @@ class FormWeather extends React.Component {
         <input
           className={styles.formInput}
           type='text'
+          value={input}
           placeholder='Enter Name of City'
           onChange={this.onInputChange}
           required
